@@ -7,7 +7,7 @@ global _start
 section .text
 _start:
   cld				; zero out edx
-  mov dl, 0x2c			; initialisation vector used to find end of encoded shellcode
+  mov dl, 0x2c			; initial key is used to find end of encoded shellcode
   push edx			;  and used as initial xor key
   jmp call_decoder		; jmp / call/ pop
 decoder:
