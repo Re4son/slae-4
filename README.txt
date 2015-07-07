@@ -2,7 +2,7 @@
 ## [Name]: xor-ror-feedback-encoder.py -- shellcode encoder
 ##-----------------------------------------------------------------------------
 ## [Author]: Re4son re4son [at] whitedome.com.au
--------------------------------------------------------------------------------
+##-----------------------------------------------------------------------------
 ## [Details]:
 ## Uses a random integer as initialisation vecor to xor the first byte of
 ## shellcode then uses the un-encoded previous byte and ror's it
